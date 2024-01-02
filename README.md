@@ -1,6 +1,5 @@
 Certainly! Here's the README content in Markdown format:
 
-````markdown
 # Permission Guard
 
 Permission Guard is a Flutter package that provides an easy way to handle permissions in your Flutter applications. It simplifies the process of requesting, checking, and managing user permissions, allowing you to focus on the core functionality of your app.
@@ -20,7 +19,6 @@ To start using Permission Guard in your Flutter project, you need to add it as a
 dependencies:
   permission_guard: ^1.0.0
 ```
-````
 
 For more detailed installation instructions, please refer to the package's [documentation](https://example.com).
 
