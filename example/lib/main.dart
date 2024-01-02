@@ -1,7 +1,7 @@
-import 'dart:developer';
-
+import 'package:example/widgets/pemission_button.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_guard/permission_guard.dart';
+import 'package:permission_guard/utils/readability.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,24 +10,62 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Permissions Gaurd',
       themeMode: ThemeMode.light,
-      darkTheme: ThemeData(brightness: Brightness.dark),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.dark, seedColor: const Color(0xFFF58229)),
+      ),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF58229)),
         useMaterial3: true,
       ),
-      home: PermissionGaurdScreen(
-        title: 'Permission',
-        description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer viverra finibus metus non ultricies. Nullam condimentum lobortis eros quis commodo. Maecenas condimentum accumsan nulla non finibus. Sed nec odio quis urna pulvinar faucibus. Morbi ut erat et lectus egestas vestibulum. Morbi vitae orci consequat, scelerisque turpis imperdiet, iaculis orci. Sed id iaculis lacus. Nullam mollis magna sed leo eleifend tristique.',
-        onAllow: () {
-          log('Allow Permission');
-        },
+      home: const App(),
+    );
+  }
+}
+
+class App extends StatelessWidget {
+  const App({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        height: context.height,
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            PermissionButton(
+              permissionScreen: PermissionGaurdScreen.location(
+                onAllow: () => Navigator.pop(context),
+                onSkip: () => Navigator.pop(context),
+              ),
+              permission: 'Location',
+            ),
+            PermissionButton(
+              permissionScreen: PermissionGaurdScreen.notification(
+                onAllow: () => Navigator.pop(context),
+                onSkip: () => Navigator.pop(context),
+              ),
+              permission: 'Notification',
+            ),
+            PermissionButton(
+              permissionScreen: PermissionGaurdScreen.bluetooth(
+                onAllow: () => Navigator.pop(context),
+                onSkip: () => Navigator.pop(context),
+              ),
+              permission: 'Bluetooth',
+            ),
+          ],
+        ),
       ),
     );
   }

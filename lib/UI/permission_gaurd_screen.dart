@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_guard/UI/widgets/skip_permission_button.dart';
+import 'package:permission_guard/manager/permit.dart';
 import 'package:permission_guard/utils/readability.dart';
 
 import 'widgets/allow_permission_button.dart';
@@ -54,9 +55,78 @@ class PermissionGaurdScreen extends StatelessWidget {
         assert(!(allowButtonText != null && allowButtonWidget != null),
             'Declaring both [allowButtonText] and [allowButtonWidget] is not supported.'),
         assert(!(skipButtonText != null && skipButtonWidget != null),
-            'Declaring both [skipButtonText] and [skipButtonWidget] is not supported.'),
-        assert((canSkip && onSkip == null),
-            'a callback function [onSkip] can not be null if permission canSkip');
+            'Declaring both [skipButtonText] and [skipButtonWidget] is not supported.');
+
+  /// A Ready Editable Screen with functionality to ask user for Location Permission.
+
+  factory PermissionGaurdScreen.location({
+    Widget? icon,
+    String title = "Location",
+    String description =
+        'Allow maps to access your location while you use the app',
+    VoidCallback? onAllow,
+    VoidCallback? onSkip,
+  }) =>
+      PermissionGaurdScreen(
+        icon: icon ??
+            Image.asset(
+              'assets/location-pin.gif',
+              height: 200,
+            ),
+        title: title,
+        description: description,
+        onAllow: () async {
+          Permit.location();
+          onAllow?.call();
+        },
+        onSkip: onSkip,
+      );
+  factory PermissionGaurdScreen.notification(
+          {Widget? icon,
+          String title = "Notifications",
+          String description =
+              "Please enable notifications to receive updates and reminders",
+          VoidCallback? onAllow,
+          VoidCallback? onSkip,
+          String? allowText = 'Turn on'}) =>
+      PermissionGaurdScreen(
+        icon: icon ??
+            Image.asset(
+              'assets/notifications.gif',
+              height: 200,
+            ),
+        title: title,
+        allowButtonText: allowText,
+        description: description,
+        onAllow: () async {
+          Permit.notification();
+          onAllow?.call();
+        },
+        onSkip: onSkip,
+      );
+  factory PermissionGaurdScreen.bluetooth(
+          {Widget? icon,
+          String title = "Bluetooth Access",
+          String description =
+              "Please enable Bluetooth to find, connect to, and determine the relative position of nearby devices",
+          VoidCallback? onAllow,
+          VoidCallback? onSkip,
+          String? allowText}) =>
+      PermissionGaurdScreen(
+        icon: icon ??
+            Image.asset(
+              'assets/bluetooth.gif',
+              height: 200,
+            ),
+        title: title,
+        allowButtonText: allowText,
+        description: description,
+        onAllow: () async {
+          Permit.notification();
+          onAllow?.call();
+        },
+        onSkip: onSkip,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -64,48 +134,59 @@ class PermissionGaurdScreen extends StatelessWidget {
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              const Spacer(),
-              Expanded(flex: 2, child: icon!),
-              const Spacer(),
-              Text(
-                title,
-                style: context.textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const Spacer(),
-              ButtonBar(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Allow Button
-                  AllowPermissionButton(
-                      onAllow: onAllow,
-                      allowButtonWidget: allowButtonWidget,
-                      allowButtonText: allowButtonText),
-                  const SizedBox(
-                    height: 16,
+                  const Spacer(
+                    flex: 1,
                   ),
-                  // Skip Button
-                  if (canSkip)
-                    SkipPermissionButton(
-                        onskip: () => onSkip,
-                        skipButtonWidget: skipButtonWidget,
-                        skipButtonText: skipButtonText),
+                  icon!,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    title,
+                    style: context.textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Spacer(),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ButtonBar(
+                      alignment: MainAxisAlignment.center,
+                      children: [
+                        // Allow Button
+                        AllowPermissionButton(
+                            onAllow: onAllow,
+                            allowButtonWidget: allowButtonWidget,
+                            allowButtonText: allowButtonText),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        // Skip Button
+                        if (canSkip)
+                          SkipPermissionButton(
+                              onskip: onSkip ?? () {},
+                              skipButtonWidget: skipButtonWidget,
+                              skipButtonText: skipButtonText),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              const Spacer(),
             ],
           ),
         ),
